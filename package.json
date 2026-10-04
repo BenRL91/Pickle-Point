@@ -1,0 +1,22 @@
+{
+  "name": "pickle-point",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "demo": "node examples/quick-play.js",
+    "build": "node scripts/build.mjs"
+  },
+  "exports": {
+    ".": "./src/engine.js",
+    "./sessions": "./src/sessions.js"
+  },
+  "devDependencies": {
+    "fake-indexeddb": "6.2.5",
+    "linkedom": "0.18.13"
+  }
+}

@@ -1,0 +1,27 @@
+[
+  {"name":"traditional opening server exception and two-server rotation",
+   "config":{"gameId":"golden-doubles"},
+   "steps":[
+     {"winner":1,"points":[0,0],"call":[0,0,1],"server":"b1","side":"right","effects":["side-out"]},
+     {"winner":0,"points":[0,0],"call":[0,0,2],"server":"b2","side":"left","effects":["second-server"]},
+     {"winner":0,"points":[0,0],"call":[0,0,1],"server":"a1","side":"right","effects":["side-out"]},
+     {"winner":0,"points":[1,0],"call":[1,0,1],"server":"a1","side":"left","effects":["point"]},
+     {"winner":1,"points":[1,0],"call":[1,0,2],"server":"a2","side":"right","effects":["second-server"]},
+     {"winner":1,"points":[1,0],"call":[0,1,1],"server":"b1","side":"right","effects":["side-out"]}
+   ]},
+  {"name":"USAP 2026 receiving points select the new right-side server",
+   "config":{"gameId":"golden-rally","profileId":"usap-2026-rally-doubles"},
+   "steps":[
+     {"winner":1,"points":[0,1],"call":[1,0],"server":"b2","side":"right","effects":["point","side-out"]},
+     {"winner":1,"points":[0,2],"call":[2,0],"server":"b2","side":"left","effects":["point"]},
+     {"winner":0,"points":[1,2],"call":[1,2],"server":"a2","side":"right","effects":["point","side-out"]},
+     {"winner":0,"points":[2,2],"call":[2,2],"server":"a2","side":"left","effects":["point"]}
+   ]},
+  {"name":"singles receiver follows serving score rather than receiver score",
+   "config":{"gameId":"golden-singles","profileId":"usap-2026-side-out-singles"},
+   "steps":[
+     {"winner":0,"points":[1,0],"call":[1,0],"server":"a1","side":"left","effects":["point"]},
+     {"winner":1,"points":[1,0],"call":[0,1],"server":"b1","side":"right","effects":["side-out"]},
+     {"winner":1,"points":[1,1],"call":[1,1],"server":"b1","side":"left","effects":["point"]}
+   ]}
+]

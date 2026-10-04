@@ -1,0 +1,4 @@
+node_modules/
+.openai/*.log
+.openai/local*
+*.tar.gz

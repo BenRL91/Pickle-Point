@@ -1,0 +1,65 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> pickle-point@0.2.0 test
+> node --test test/*.test.js
+
+✔ Quick Play creates one session and recovers exact game from serialized state (156.477009ms)
+✔ undo accidental final rally, redo, next game remains in one outing (108.988304ms)
+✔ no second game while a game is active; incomplete game excluded from W/L (6.342482ms)
+✔ post-game assignment computes stats without changing the rally journal; deletion anonymizes (64.491943ms)
+✔ unsupported or damaged data is preserved by rejecting recovery, not resetting (5.587418ms)
+✔ two active sessions rejected, score checkpoint reconstructed (4.761935ms)
+✔ exact user description starts John right, Jack left, traditional doubles 11/2 (219.918919ms)
+✔ voice punctuation and second player as server become explicit right-side anchor (12.740984ms)
+✔ spoken numeric settings and exact versioned rally format (5.029924ms)
+✔ singles, Unicode names, multiword names, explicit first server (14.663339ms)
+✔ missing first server is explicitly disclosed (2.737781ms)
+✔ ambiguous or conflicting descriptions never start a guessed game (0.974257ms)
+✔ unsupported advanced instructions are disclosed for review (0.807284ms)
+✔ unpunctuated speech transcripts identify the server without absorbing the name into a team (6.934749ms)
+Explored 574 distinct bounded states.
+✔ bounded state exploration checks both winners and reversible transitions across all profiles (3688.408264ms)
+✔ seeded long deuce games, corrections and replay remain deterministic (20354.398094ms)
+✔ JSON journal recovery restores exact state after every command (103.929043ms)
+✔ stale/corrupt checkpoint is ignored and rebuilt from accepted journal (9.945454ms)
+✔ changed journal, broken sequence, duplicated event and profile drift reject (18.199534ms)
+✔ an identical retried event is acknowledged without another rally or haptic (1.33454ms)
+✔ stale revision and rival host cannot append or mutate original game (1.720877ms)
+✔ invalid winner, timestamp, ID and unknown fields fail explicitly (1.145447ms)
+✔ missing journal entries fail with a recovery error rather than resetting (7.488284ms)
+✔ golden: traditional opening server exception and two-server rotation (120.278197ms)
+✔ golden: USAP 2026 receiving points select the new right-side server (33.244507ms)
+✔ golden: singles receiver follows serving score rather than receiver score (8.636709ms)
+✔ starting team/anchor variants all open at 0-0-2 with correct slot (19.561097ms)
+✔ second server is a turn role, not a fixed person (25.34854ms)
+✔ traditional singles no point on receiving win and no server-number cue (0.725731ms)
+✔ single receiver stands diagonal to serving side even when scores have different parity (0.610066ms)
+✔ win-by-two deuce is not an accidental game completion (179.814191ms)
+✔ USAP 2026 receiver may win the game; traditional receiver cannot score (4.053099ms)
+✔ game-point projections are possible scoring opportunities, not win claims (0.817236ms)
+✔ end switch occurs once and Undo/Redo reverses it with scoring state (11.712205ms)
+✔ visible Undo recovers accidental final point (3.538883ms)
+✔ multiple Undo actions each reverse exactly one effective rally (10.766397ms)
+✔ Flip view does not change physical positions, score or server; Undo retains perspective (1.289325ms)
+✔ abandoned games cannot be scored until explicitly reopened (4.908021ms)
+✔ simple scoring awards one point without fabricated server/position logic (0.619258ms)
+✔ configs/profile snapshots and resulting games are immutable (2.355633ms)
+✔ unknown rally formats and invalid settings/rosters fail closed (0.483786ms)
+✔ three rotating games stay in one 128-minute outing with 2-1 own results (143.174576ms)
+✔ best-of match derives winner, and Undo invalidates the result (4.116962ms)
+✔ session completion requires explicit game completion/abandonment; excludes abandoned W/L (1.30671ms)
+✔ old game correction cannot create two active games or replace accepted journal (2.411602ms)
+✔ partner/rule changes require a new match; invalid UTC date rejects (0.954107ms)
+✔ commit survives closing and reopening the database with full game journal (40.754214ms)
+✔ simultaneous tabs cannot overwrite each other; loser preserves winner (11.092071ms)
+✔ failed storage write leaves the last saved session intact (4.877045ms)
+✔ unsupported schema remains exportable and is never replaced by empty data (2.170477ms)
+✔ DOM smoke: describe → preview → start → rally → undo → complete → next game → persisted session (287.379717ms)
+ℹ tests 51
+ℹ suites 0
+ℹ pass 51
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 24315.047334
