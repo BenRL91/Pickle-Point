@@ -21,6 +21,6 @@ Statuses are deliberate: **adopted locally** permits this isolated engine; **rec
 | Old `leeway-score` IDs in planning | Unregistered draft | Review machine source names/URLs before contract launch; no migration required because no source integration exists yet |
 | Pricing/payments | Not implemented | No pricing decision, subscriptions or payment configuration changed |
 
-Next sequence: add manual baseline correction as an explicit event and expand fixtures → choose native/phone stack and durable transaction/checkpoint adapter → native reducer parity and watch interaction prototype → resolve registry/backend and review additive PaddleLog contract in staging → health duplicate/coexistence device tests → connected beta. Do not interpret later phases as authorization to edit PaddleLog now.
+Next sequence: keep phone/tablet first; expand local fixtures and durable transaction/checkpoint work → use the accepted ADR-006 account/membership boundary when designing cloud onboarding → choose/provision an independent backend only after staging/API review → review the additive PaddleLog usage contract in staging → health duplicate/coexistence device tests → connected beta. Watch targets remain deferred. Do not interpret later phases as authorization for production cross-app writes.
 
 The isolated scoring engine is executable now without those integration decisions. A developer receiving this package should run the tests, preserve rule/engine versions, refresh audit if source changes, and keep integration code disabled until its particular gate is resolved.
