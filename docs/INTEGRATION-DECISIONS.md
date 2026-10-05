@@ -8,7 +8,7 @@ Statuses are deliberate: **adopted locally** permits this isolated engine; **rec
 | Launch scoring prototype | Adopted locally | Versioned USAP 2026 traditional singles/doubles, USAP rally, simple mode; no guessed MLP variants |
 | Hierarchy | Adopted locally | Session → Match → Game → journal; mutable names outside engine slots |
 | Active authority | Adopted locally | One expected revision/host epoch; no automatic device takeover or score branch merge |
-| Shared identity | Recommended/gated | Reuse current Supabase issuer, preserve existing Leeway UUIDs; resolve suite registry ownership/extraction before authenticated cloud integration |
+| Shared identity | ADR-006 accepted / cloud implementation gated | Reuse current Supabase issuer and preserve existing Leeway UUIDs. Do not mint a Pickle Point suite UUID; future cloud onboarding resolves the authoritative Leeway UUID, then establishes independent `pickle_point/player` membership. Hosting owner access remains unrelated. |
 | Score storage | Recommended/gated | Separate Score Workers/D1 is aligned with current stack; choose/provision only after API/native access and account-resolution design review |
 | App permissions | Required before integration | Per-app owner checks, explicit operation-limited grants; no shared database credentials or library-wide reads |
 | PaddleLog timing edits | Recommended/gated | PaddleLog-only visible override; source-aware mapping/validator/backup/old-client migration separately reviewed before writes |
