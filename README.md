@@ -1,71 +1,70 @@
-# Pickle Point — phone/tablet preview 0.2.0
+# Pickle Point
 
-Private responsive web app with Quick Play, optional voice/text game descriptions, player library, session history and local persistence. Native packaging and cloud/integrations are subsequent milestones. See [Phone preview notes](docs/PHONE-PREVIEW.md).
+**Pickleball scoring built around a deterministic, recoverable game engine.**
 
-Run `npm ci`, `npm run build`, and `npm test`. The Site serves `dist/`; `src/` is copied into `dist/src/` by the build.
+Pickle Point models the details behind a score: serving order, court positions, end changes, match results and corrections. A phone/tablet interface wraps the engine with Quick Play, player management and local session history.
 
-# Pickle Point — isolated scoring engine
+[Scoring specification](docs/SCORING-SPEC.md) · [Phone preview](docs/PHONE-PREVIEW.md) · [Verification](docs/VERIFICATION.md) · [Contributing](CONTRIBUTING.md)
 
-Working name. Version 0.1.0. This is the first implementation milestone, not a released phone/watch app.
+## Product capabilities
 
-## Run
+- Start a doubles game quickly or configure singles, doubles, side-out and rally profiles.
+- Score by winning team with visible Undo and a transient Redo opportunity.
+- Display score calls, service positions and court orientation.
+- Organize players, games and session history with local persistence.
+- Turn typed or optional speech-transcribed descriptions into an editable game setup.
 
-Node 22 or later; no third-party dependencies and no install step.
+## Engineering highlights
+
+| Concern | Design |
+| --- | --- |
+| Repeatable scoring | Pure engine with immutable rule snapshots; caller supplies IDs and timestamps |
+| Safe retries | Stable event IDs, duplicate detection and expected revisions |
+| Recovery | Rebuild derived state from the accepted command journal |
+| Corrections | Undo restores score, server and end-switch state, including accidental game completion |
+| Persistence | Atomic IndexedDB saves and optimistic revision checks in the preview adapter |
+| Compatibility | Versioned rule profiles; unknown versions fail closed |
+
+The engine does not perform network requests, generate clocks or IDs, or authorize a scorer. Those responsibilities belong to adapters. Journal checksums detect accidental corruption; they are not cryptographic proof of a result.
+
+## Development
+
+Node.js **22 or later**.
 
 ```sh
+npm ci
 npm test
 npm run demo
+npm run build
 ```
 
-`node --test test/*.test.js` is equivalent. Tests include manually specified golden transitions, bounded exploration, seeded traces, journal corruption/retry tests, and outing/match behavior. See `test-results.txt` for the latest run. No Xcode, HealthKit, Health Connect, native Watch, physical court, cloud or PaddleLog write has been tested by this milestone.
+The engine uses JavaScript ES modules. Development dependencies support IndexedDB and DOM emulation. Tests cover golden scoring transitions, bounded exploration, seeded traces, recovery, session behavior and UI/storage adapters. These checks do not establish real-device durability or court usability.
 
-## Use the engine
+## Code tour
 
-```js
-import {createGame, applyCommand, serializeGame, restoreGame} from './src/engine.js';
+| Path | Responsibility |
+| --- | --- |
+| [src/engine.js](src/engine.js) | Scoring commands and state transitions |
+| [src/sessions.js](src/sessions.js) | Session → match → game hierarchy |
+| [src/storage.js](src/storage.js) | Local persistence adapter |
+| [src/app-model.js](src/app-model.js) | Application state orchestration |
+| [src/description.js](src/description.js) | Deterministic setup-description parser |
+| [test/](test/) | Regression and property-oriented tests |
 
-const before = createGame({gameId: 'stable-game-id'}); // doubles, side-out, 11, win by 2
-const result = applyCommand(before, {
-  type: 'RallyWon', winner: 0,
-  eventId: 'stable-command-id', at: '2026-10-04T02:25:00Z',
-  expectedRevision: before.state.headRevision, hostEpoch: before.config.hostEpoch
-});
-// The host adapter must atomically persist result.game and its outbox BEFORE
-// publishing result.game.state or playing result.effects as success feedback.
-const bytes = serializeGame(result.game);
-const recovered = restoreGame(bytes);
-```
+## Release status
 
-The caller supplies stable game/event IDs, UTC timestamps, expected revision and host epoch. The engine creates no clocks, IDs, network requests, file writes, auth sessions or health records. Returned objects and immutable rule snapshots are deeply frozen; input is never mutated. `ScoringError.code` is the adapter-facing error contract.
+This README describes the source on this branch. The existing phone-preview notes document the local browser milestone; the deployed app is being synchronized separately. Native Watch/Wear OS apps and health integrations must not be inferred from the scoring engine's portability. See [integration decisions](docs/INTEGRATION-DECISIONS.md) for boundaries and planned work.
 
-`applyCommand` supports RallyWon, UndoRally, RedoRally, FlipView, AbandonGame and ReopenGame. An identical event retry returns `duplicate:true` with no effects. Reusing an ID with different payload rejects. Stale revisions and rival epochs reject; epochs alone are not authorization. All platform adapters must enforce the actual single-writer permission.
+Changes follow pull requests and CI. Source merges do not deploy the app.
 
-Undo reverses one effective rally, including completion, server and derived end switches. Redo is one candidate, retained until a new rally or abandonment. View perspective is independent and survives rally Undo. Ended accidental game point can be undone immediately. Abandonment requires explicit reopening before scoring/correction. Names are not engine identities; stable player slots keep scoring intact when names are assigned later.
+## Related projects
 
-## Supported rule profiles
+| Project | Responsibility |
+| --- | --- |
+| [PaddleLog](https://github.com/BenRL91/PaddleLog) | Equipment, maintenance and usage history |
+| [Pickle Point](https://github.com/BenRL91/Pickle-Point) | Scoring, games and sessions |
+| [Leeway Coaching](https://github.com/BenRL91/Leeway-Coaching) | Booking and breakdown fulfillment |
+| [Leeway Replay](https://github.com/BenRL91/Leeway-Replay) | Private video reviews and discussion |
+| [Leeway Common](https://github.com/BenRL91/Leeway-Common) | Shared notification components and service |
 
-- `usap-2026-side-out-doubles`
-- `usap-2026-side-out-singles`
-- `usap-2026-rally-doubles`
-- `usap-2026-rally-singles`
-- `simple-v1` (score only; no fabricated server/court behavior)
-
-Target, win-by, starting team, team starting anchors, starting physical left team, one end-switch threshold and host epoch are configurable. The snapshot and engine version accompany every game. Unknown profiles/versions fail closed instead of silently replaying history under different rules. Do not mutate an existing profile to implement a future rule change: add a version and retain the old reducer.
-
-Output includes score, score call, serving team/slot, transient server number (traditional doubles), service side, receiver, required service positions, game-point opportunities, winner/status, physical left team and screen orientation. Court side is relative to each team's view facing the net. It does not measure physical player movement or stacking. The active server is retained at completion to show the final transition; gameplay is terminal until Undo.
-
-## Session hierarchy
-
-`src/sessions.js` models ScoreSession → Match → Game → journal. Its owner ID is an opaque local reference, not verified suite identity. Casual matches require one win; best-of uses required wins. Match results derive from completed games and invalidate after Undo. Team/rule changes require a new match. A session cannot finish or start a second active game without explicitly completing/abandoning the current game. A scorer absent from the roster has no inferred W/L. A finished session's correction/reopen workflow is not implemented yet.
-
-## Recovery and integrity
-
-Accepted journal commands plus initial config are authoritative. Cached state is ignored during restoration and rebuilt; changed journal transitions/profile/version reject. Checksums use FNV-1a over canonical JSON UTF-8, for accidental corruption only. They are not signatures, are not collision-resistant and do not prove sporting results or user permission. Production cloud must validate ownership/host and replay events; cryptographic authenticity is a separate boundary.
-
-This reference implementation replays the journal on each command. That is deliberate for correctness verification, but it is not the final low-latency watch persistence path. Benchmark/checkpoint design and native reducer parity are next. Bounded exploration covers all reachable states within its configured finite limits, not literally all scores of unbounded win-by-two games.
-
-## Current scope limits
-
-No UI, persistent local adapter, cloud backend, authentication integration, payments, PaddleLog write, health export, native watch target or deployment. No MLP freeze/DreamBreaker rules, technical-foul officiating, manual arbitrary score baseline correction, roster replacement within a live game, multi-scorer handoff, automatic pauses, equipment interval writer or future scoring-profile migration. Unknown variants are rejected. These remain explicit future work, not simulated integrations.
-
-Read `docs/ARCHITECTURE-AUDIT.md` for refreshed live/source evidence, `docs/INTEGRATION-DECISIONS.md` for gated architecture decisions, and `docs/SCORING-SPEC.md` for rule provenance and platform-neutral behavior. All code lives in an isolated directory; neither audited existing app was edited.
+Each repository has its own release lifecycle. Shared identity does not grant access to another app's private data.
